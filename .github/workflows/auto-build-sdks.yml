@@ -1,0 +1,68 @@
+name: Sync Enriched Spec & Build SDKs
+
+on:
+  repository_dispatch:
+    types: [enriched-spec-updated] # Triggered automatically when new release of paystack-spec-enriched occurs
+  schedule:
+    - cron: '0 */6 * * *'           # Fallback periodic check every 6 hours
+  workflow_dispatch:                 # Manual trigger with options
+    inputs:
+      auto_generate:
+        description: 'Automatically generate & compile new SDKs after spec acquisition'
+        type: boolean
+        required: true
+        default: true
+      target_languages:
+        description: 'Comma-separated target languages (typescript, python, go, all)'
+        type: string
+        required: true
+        default: 'typescript'
+      spec_url:
+        description: 'Remote Enriched Spec Release URL (Fetched ONLY by GitHub Action)'
+        type: string
+        required: false
+        default: 'https://raw.githubusercontent.com/PaystackOSS/paystack-spec-enriched/main/dist/paystack-enriched.yaml'
+
+jobs:
+  sync-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SDK Generator Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Download & Update Local Enriched Spec Copy
+        env:
+          ENRICHED_SPEC_URL: ${{ github.event.inputs.spec_url || 'https://raw.githubusercontent.com/PaystackOSS/paystack-spec-enriched/main/dist/paystack-enriched.yaml' }}
+        run: |
+          mkdir -p spec
+          echo "🌐 GitHub Action fetching spec from remote release: $ENRICHED_SPEC_URL"
+          curl -sSL "$ENRICHED_SPEC_URL" -o spec/paystack-enriched.yaml
+          echo "✅ Local spec copy updated: spec/paystack-enriched.yaml"
+
+      - name: Generate & Compile Target SDKs from Local Spec Copy
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.auto_generate == 'true' }}
+        env:
+          TARGET_LANGS: ${{ github.event.inputs.target_languages || 'typescript' }}
+        run: |
+          echo "🚀 Generating SDKs from local spec copy for languages: $TARGET_LANGS..."
+          npx paystack-sdk-gen generate --lang "$TARGET_LANGS"
+
+      - name: Run Prism Contract Test Validation Suite
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.auto_generate == 'true' }}
+        run: |
+          echo "🧪 Running Prism Mock Validation against local spec copy..."
+          npx paystack-sdk-gen test
+
+      - name: Commit & Push Updated Local Spec & Generated SDKs
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(sdk): auto-sync enriched spec copy & rebuild SDKs [skip ci]"
+          file_pattern: "spec/* packages/*"
