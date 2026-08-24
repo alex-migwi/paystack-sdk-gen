@@ -1,15 +1,15 @@
-# ⚡ Paystack Multi-Language Thick-Client SDK Generator (`paystack-sdk-gen`)
+# Paystack Multi-Language Thick-Client SDK Generator (`paystack-sdk-gen`)
 
 > **Stripe-Quality, High-Performance SDK Generation Pipeline for Paystack APIs**  
 > Consumes an enriched OpenAPI 3.0 specification (`paystack-spec-enriched`) and produces enterprise-grade, thick-client SDKs for **TypeScript**, **Python**, **Go**, **Java**, **PHP**, **C#**, **Ruby**, **Flutter**, **Android (Kotlin)**, and **iOS (Swift)**.
 
 ---
 
-## 📌 Architecture & Local Spec Model
+## Architecture & Local Spec Model
 
 Standard OpenAPI generators output thin API wrappers that lack enterprise resilience patterns. `paystack-sdk-gen` bridges this gap by combining **OpenAPI 3.0 vendor extensions** (`x-idempotency`, `x-retry-safe`, `x-pagination`) with **custom Mustache engine templates**.
 
-### 🔒 Decoupled Spec Storage Principles
+### Decoupled Spec Storage Principles
 - **Local Spec Copy**: `paystack-sdk-gen` maintains its own local copy of the spec in `spec/paystack-enriched.yaml`.
 - **Zero Script Network Calls**: Internal Node.js scripts (`sync-spec.js`, `build-sdks.js`, `test-sdks.js`, CLI) operate exclusively on `spec/paystack-enriched.yaml` with zero network requests.
 - **Automated GitHub Action Runner**: The `.github/workflows/auto-build-sdks.yml` workflow step is the sole runner that fetches new spec releases over HTTPS via `curl` and updates `spec/paystack-enriched.yaml`.
@@ -18,7 +18,7 @@ Standard OpenAPI generators output thin API wrappers that lack enterprise resili
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                        paystack-spec-enriched (Remote Repo)                           │
 │                        • Injects x-idempotency, x-retry-safe, x-pagination              │
-└───────────────────────────────────────────┬────────────────────────────────────────────┘
+└───────────────────────────┬────────────────────────────────────────────┘
                                             │
                                             │ (GitHub Action step ONLY downloads via curl)
                                             ▼
@@ -51,20 +51,20 @@ Standard OpenAPI generators output thin API wrappers that lack enterprise resili
 
 ---
 
-## 🚀 Stripe-Quality Thick-Client Features
+## Stripe-Quality Thick-Client Features
 
 | Pillar | Mechanism | Implementation Details |
 | :--- | :--- | :--- |
-| **🔁 Exponential Backoff Retries** | Automatic retry loop for transient failures | Catches `500`, `502`, `503`, `504`, `429`, `ECONNRESET`, `ETIMEDOUT`. Applies exponential backoff + jitter: $\text{delayMs} = \min(300 \times 2^{\text{attempt}} + \text{jitter}, 4000)$. Configurable via `maxRetries`. |
-| **🔑 Auto-UUID Idempotency** | Vendor Tag: `x-idempotency: true` | Automatically injects unique `X-Idempotency-Key` UUID v4 headers on POST endpoints marked idempotent if omitted by caller. |
-| **🛡 Strongly Typed Errors** | Status Code $\rightarrow$ Class Mapping | Transpiles API responses into custom error hierarchy: `PaystackError` (base), `AuthenticationError` (401), `RateLimitError` (429), `InvalidRequestError` (400/422), `IdempotencyError` (409), `ApiConnectionError` (5xx/Network). |
-| **📦 Enterprise Transport** | `Configuration.axiosInstance` | Allows consumers to inject custom HTTP clients for proxying, connection pooling, request logging, or unit test mocking. |
-| **🔄 Decoupled GitHub Auto-Sync** | Webhook: `repository_dispatch` | Subscribes to `enriched-spec-updated` release events from `paystack-spec-enriched` and runs automated 6-hour cron checks. |
-| **🧪 Prism Mock Validation** | Integrated Test Matrix | Boots `@stoplight/prism-cli` mock server on port 4010 and executes live integration contract tests before code publishing. |
+| **Exponential Backoff Retries** | Automatic retry loop for transient failures | Catches `500`, `502`, `503`, `504`, `429`, `ECONNRESET`, `ETIMEDOUT`. Applies exponential backoff + jitter: $\text{delayMs} = \min(300 \times 2^{\text{attempt}} + \text{jitter}, 4000)$. Configurable via `maxRetries`. |
+| **Auto-UUID Idempotency** | Vendor Tag: `x-idempotency: true` | Automatically injects unique `X-Idempotency-Key` UUID v4 headers on POST endpoints marked idempotent if omitted by caller. |
+| **Strongly Typed Errors** | Status Code $\rightarrow$ Class Mapping | Transpiles API responses into custom error hierarchy: `PaystackError` (base), `AuthenticationError` (401), `RateLimitError` (429), `InvalidRequestError` (400/422), `IdempotencyError` (409), `ApiConnectionError` (5xx/Network). |
+| **Enterprise Transport** | `Configuration.axiosInstance` | Allows consumers to inject custom HTTP clients for proxying, connection pooling, request logging, or unit test mocking. |
+| **Decoupled GitHub Auto-Sync** | Webhook: `repository_dispatch` | Subscribes to `enriched-spec-updated` release events from `paystack-spec-enriched` and runs automated 6-hour cron checks. |
+| **Prism Mock Validation** | Integrated Test Matrix | Boots `@stoplight/prism-cli` mock server on port 4010 and executes live integration contract tests before code publishing. |
 
 ---
 
-## 🎛 GitHub Actions Automation (`auto-build-sdks.yml`)
+## GitHub Actions Automation (`auto-build-sdks.yml`)
 
 Spec acquisition and SDK generation are controlled automatically or manually via GitHub Actions:
 
@@ -76,7 +76,7 @@ Spec acquisition and SDK generation are controlled automatically or manually via
 
 ---
 
-## 💻 Fully Specified CLI Command Reference
+## Fully Specified CLI Command Reference
 
 The repository provides a global binary tool `paystack-sdk-gen` for internal engineering workflows and automated scripts.
 
@@ -134,27 +134,27 @@ paystack-sdk-gen extract-templates [options]
 
 ---
 
-## 🌐 Supported Language Output Matrix
+## Supported Language Output Matrix
 
 | Language / Target | Generator Flag | Output Directory | Status |
 | :--- | :--- | :--- | :--- |
-| **TypeScript / JS** | `typescript-axios` | `packages/typescript` | ✅ Production Ready & Prism Verified |
-| **Python** | `python` | `packages/python` | 🟡 Template Configured |
-| **Go** | `go` | `packages/go` | 🟡 Template Configured |
-| **Java** | `java` | `packages/java` | 🟡 Template Configured |
-| **PHP** | `php` | `packages/php` | 🟡 Template Configured |
-| **C# (.NET)** | `csharp` | `packages/csharp` | 🟡 Template Configured |
-| **Ruby** | `ruby` | `packages/ruby` | 🟡 Template Configured |
-| **Flutter / Dart** | `dart-dio` | `packages/flutter` | 🟡 Template Configured |
-| **Android (Kotlin)**| `kotlin` | `packages/android` | 🟡 Template Configured |
-| **iOS (Swift)** | `swift5` | `packages/ios` | 🟡 Template Configured |
+| **TypeScript / JS** | `typescript-axios` | `packages/typescript` | Production Ready & Prism Verified |
+| **Python** | `python` | `packages/python` | Template Configured |
+| **Go** | `go` | `packages/go` | Template Configured |
+| **Java** | `java` | `packages/java` | Template Configured |
+| **PHP** | `php` | `packages/php` | Template Configured |
+| **C# (.NET)** | `csharp` | `packages/csharp` | Template Configured |
+| **Ruby** | `ruby` | `packages/ruby` | Template Configured |
+| **Flutter / Dart** | `dart-dio` | `packages/flutter` | Template Configured |
+| **Android (Kotlin)**| `kotlin` | `packages/android` | Template Configured |
+| **iOS (Swift)** | `swift5` | `packages/ios` | Template Configured |
 
 ---
 
-## 🏢 Internal Engineering & Documentation Guides
+## Internal Engineering & Documentation Guides
 
-- 🏢 **[INTERNAL_WORKFLOW.md](file:///home/alex-muturi/alex/alex-paystack/paystack-sdk-gen/INTERNAL_WORKFLOW.md)**: Guide for Paystack API engineers on automated cross-repo release webhooks, workflow dispatch options, and registry publishing.
-- 📘 **[USAGE.md](file:///home/alex-muturi/alex/alex-paystack/paystack-sdk-gen/USAGE.md)**: Comprehensive Developer Integration Guide with code samples, configuration reference, and typed error handling.
+- **[INTERNAL_WORKFLOW.md](file:///home/alex-muturi/alex/alex-paystack/paystack-sdk-gen/INTERNAL_WORKFLOW.md)**: Guide for Paystack API engineers on automated cross-repo release webhooks, workflow dispatch options, and registry publishing.
+- **[USAGE.md](file:///home/alex-muturi/alex/alex-paystack/paystack-sdk-gen/USAGE.md)**: Comprehensive Developer Integration Guide with code samples, configuration reference, and typed error handling.
 
 ---
 
@@ -163,4 +163,3 @@ paystack-sdk-gen extract-templates [options]
 This repository was created by Alex Muturi as part of the technical assessment for the DevEx Lead position at Paystack.
 
 This project is licensed under the [Candidate Assessment License](LICENSE) strictly for candidate evaluation and review purposes. All rights to production deployment, commercial usage, or integration into Paystack/Stripe products are reserved pending employment or licensing agreements.
-
