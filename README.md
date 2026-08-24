@@ -1,7 +1,15 @@
 # Paystack Multi-Language Thick-Client SDK Generator (`paystack-sdk-gen`)
 
-> **Stripe-Quality, High-Performance SDK Generation Pipeline for Paystack APIs**  
+> **High-Performance SDK Generation Pipeline for Paystack APIs**  
 > Consumes an enriched OpenAPI 3.0 specification (`paystack-spec-enriched`) and produces enterprise-grade, thick-client SDKs for **TypeScript**, **Python**, **Go**, **Java**, **PHP**, **C#**, **Ruby**, **Flutter**, **Android (Kotlin)**, and **iOS (Swift)**.
+
+---
+
+### Proof of Concept
+
+This project was created as part of the DevEx Lead technical assessment at Paystack.
+
+It demonstrates the proposed approach, developer experience, and technical thinking behind the solution. The implementation is intentionally open to further refinement and iteration.
 
 ---
 
@@ -160,6 +168,6 @@ paystack-sdk-gen extract-templates [options]
 
 ## License & Assessment Notice
 
-This repository was created by Alex Muturi as part of the technical assessment for the DevEx Lead position at Paystack.
+This project was created as part of the DevEx Lead technical assessment at Paystack. It is a proof of concept provided for evaluation purposes.
 
-This project is licensed under the [Candidate Assessment License](LICENSE) strictly for candidate evaluation and review purposes. All rights to production deployment, commercial usage, or integration into Paystack/Stripe products are reserved pending employment or licensing agreements.
+See [LICENSE](LICENSE) for the assessment terms.
