@@ -158,6 +158,9 @@ paystack-sdk-gen extract-templates [options]
 
 ---
 
-## 📄 License
+## License & Assessment Notice
 
-MIT © Paystack OSS Community
+This repository was created by Alex Muturi as part of the technical assessment for the DevEx Lead position at Paystack.
+
+This project is licensed under the [Candidate Assessment License](LICENSE) strictly for candidate evaluation and review purposes. All rights to production deployment, commercial usage, or integration into Paystack/Stripe products are reserved pending employment or licensing agreements.
+
