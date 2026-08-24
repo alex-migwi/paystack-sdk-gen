@@ -1,6 +1,6 @@
 # 📘 Comprehensive Usage & Integration Guide (`paystack-sdk-gen`)
 
-This guide provides exhaustive documentation on using the generated **Stripe-Quality Paystack SDKs**, configuring advanced client options (retries, custom transports, idempotency), handling strongly-typed errors, and executing generator CLI commands.
+This guide provides exhaustive documentation on using the generated **Paystack SDKs**, configuring advanced client options (retries, custom transports, idempotency), handling strongly-typed errors, and executing generator CLI commands.
 
 ---
 
@@ -58,7 +58,7 @@ import axios from 'axios';
 
 const config = new Configuration({
   /** Paystack Secret Key (Bearer auth header) */
-  accessToken: 'sk_test_xxxxxx',
+  accessToken: process.env.PAYSTACK_SECRET_KEY || 'sk_test_xxxxxx'
 
   /** Max exponential backoff retry attempts for 5xx/429 transient errors (Default: 3) */
   maxRetries: 3,

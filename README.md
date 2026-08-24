@@ -59,7 +59,7 @@ Standard OpenAPI generators output thin API wrappers that lack enterprise resili
 
 ---
 
-## Stripe-Quality Thick-Client Features
+## SDK Generator Client Features
 
 | Pillar | Mechanism | Implementation Details |
 | :--- | :--- | :--- |

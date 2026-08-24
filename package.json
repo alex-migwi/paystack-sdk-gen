@@ -1,7 +1,7 @@
 {
   "name": "@alex-paystack/paystack-sdk-gen",
   "version": "1.0.0",
-  "description": "Stripe-Quality Multi-Language Thick-Client SDK Generator for Paystack",
+  "description": "Multi-Language Client SDK Generator for Paystack",
   "main": "scripts/build-sdks.js",
   "bin": {
     "paystack-sdk-gen": "bin/paystack-sdk-gen.js"
