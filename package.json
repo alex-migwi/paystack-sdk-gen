@@ -1,0 +1,37 @@
+{
+  "name": "@alex-paystack/paystack-sdk-gen",
+  "version": "1.0.0",
+  "description": "Stripe-Quality Multi-Language Thick-Client SDK Generator for Paystack",
+  "main": "scripts/build-sdks.js",
+  "bin": {
+    "paystack-sdk-gen": "bin/paystack-sdk-gen.js"
+  },
+  "scripts": {
+    "extract-templates": "openapi-generator-cli author template -g typescript-axios -o ./templates/typescript",
+    "sync-spec": "node scripts/sync-spec.js",
+    "generate": "node scripts/build-sdks.js",
+    "test": "node scripts/test-sdks.js"
+  },
+  "keywords": [
+    "paystack",
+    "sdk-generator",
+    "openapi-generator",
+    "typescript",
+    "python",
+    "go",
+    "flutter",
+    "prism"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@openapitools/openapi-generator-cli": "^2.13.4",
+    "@stoplight/prism-cli": "^5.8.1",
+    "axios": "^1.7.2",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
