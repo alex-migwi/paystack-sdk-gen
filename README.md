@@ -5,14 +5,6 @@
 
 ---
 
-### Proof of Concept
-
-This project was created as part of the DevEx Lead technical assessment at Paystack.
-
-It demonstrates the proposed approach, developer experience, and technical thinking behind the solution. The implementation is intentionally open to further refinement and iteration.
-
----
-
 ## Architecture & Local Spec Model
 
 Standard OpenAPI generators output thin API wrappers that lack enterprise resilience patterns. `paystack-sdk-gen` bridges this gap by combining **OpenAPI 3.0 vendor extensions** (`x-idempotency`, `x-retry-safe`, `x-pagination`) with **custom Mustache engine templates**.
@@ -161,13 +153,13 @@ paystack-sdk-gen extract-templates [options]
 
 ## Internal Engineering & Documentation Guides
 
-- **[INTERNAL_WORKFLOW.md](file:///home/alex-muturi/alex/alex-paystack/paystack-sdk-gen/INTERNAL_WORKFLOW.md)**: Guide for Paystack API engineers on automated cross-repo release webhooks, workflow dispatch options, and registry publishing.
-- **[USAGE.md](file:///home/alex-muturi/alex/alex-paystack/paystack-sdk-gen/USAGE.md)**: Comprehensive Developer Integration Guide with code samples, configuration reference, and typed error handling.
+- **[INTERNAL_WORKFLOW.md](./docs/INTERNAL_WORKFLOW.md)**: Guide for Paystack API engineers on automated cross-repo release webhooks, workflow dispatch options, and registry publishing.
+- **[USAGE.md](./docs/USAGE.md)**: Comprehensive Developer Integration Guide with code samples, configuration reference, and typed error handling.
 
 ---
 
 ## License & Assessment Notice
 
-This project was created as part of the DevEx Lead technical assessment at Paystack. It is a proof of concept provided for evaluation purposes.
+This project was created as a proof of concept provided for evaluation purposes.
 
-See [LICENSE](LICENSE) for the assessment terms.
+See [LICENSE](LICENSE).
