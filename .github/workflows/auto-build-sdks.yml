@@ -21,7 +21,7 @@ on:
         description: 'Remote Enriched Spec Release URL (Fetched ONLY by GitHub Action)'
         type: string
         required: false
-        default: 'https://raw.githubusercontent.com/PaystackOSS/paystack-spec-enriched/main/dist/paystack-enriched.yaml'
+        default: 'https://raw.githubusercontent.com/alex-migwi/paystack-spec-enriched/main/dist/paystack-enriched.yaml'
 
 jobs:
   sync-and-build:
