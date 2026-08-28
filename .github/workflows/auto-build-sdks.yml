@@ -26,6 +26,11 @@ on:
 jobs:
   sync-and-build:
     runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+      
     steps:
       - name: Checkout SDK Generator Repository
         uses: actions/checkout@v4
@@ -40,7 +45,7 @@ jobs:
 
       - name: Download & Update Local Enriched Spec Copy
         env:
-          ENRICHED_SPEC_URL: ${{ github.event.inputs.spec_url || 'https://raw.githubusercontent.com/PaystackOSS/paystack-spec-enriched/main/dist/paystack-enriched.yaml' }}
+          ENRICHED_SPEC_URL: ${{ github.event.inputs.spec_url || 'https://raw.githubusercontent.com/alex-migwi/paystack-spec-enriched/main/dist/paystack-enriched.yaml' }}
         run: |
           mkdir -p spec
           echo "🌐 GitHub Action fetching spec from remote release: $ENRICHED_SPEC_URL"
@@ -62,6 +67,7 @@ jobs:
           npx paystack-sdk-gen test
 
       - name: Commit & Push Updated Local Spec & Generated SDKs
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.auto_generate == 'true' }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(sdk): auto-sync enriched spec copy & rebuild SDKs [skip ci]"
