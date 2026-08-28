@@ -1,0 +1,22 @@
+# StorefrontUpdateResponse
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**status** | **boolean** |  | [default to undefined]
+**message** | **string** |  | [default to undefined]
+
+## Example
+
+```typescript
+import { StorefrontUpdateResponse } from '@alex-paystack/sdk';
+
+const instance: StorefrontUpdateResponse = {
+    status,
+    message,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
