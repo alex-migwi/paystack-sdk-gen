@@ -3,34 +3,22 @@ name: Sync Enriched Spec & Build SDKs
 on:
   repository_dispatch:
     types: [enriched-spec-updated] # Triggered automatically when new release of paystack-spec-enriched occurs
-  schedule:
-    - cron: '0 */6 * * *'           # Fallback periodic check every 6 hours
+  
   workflow_dispatch:                 # Manual trigger with options
     inputs:
-      auto_generate:
-        description: 'Automatically generate & compile new SDKs after spec acquisition'
-        type: boolean
-        required: true
-        default: true
       target_languages:
-        description: 'Comma-separated target languages (typescript, python, go, all)'
+        description: 'Comma-separated target languages e.g typescript, python, go or all (to target all supported langs)'
         type: string
         required: true
-        default: 'typescript'
       spec_url:
         description: 'Remote Enriched Spec Release URL (Fetched ONLY by GitHub Action)'
         type: string
         required: false
-        default: 'https://raw.githubusercontent.com/alex-migwi/paystack-spec-enriched/main/dist/paystack-enriched.yaml'
 
 jobs:
   sync-and-build:
     runs-on: ubuntu-latest
 
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
-      contents: write
-      
     steps:
       - name: Checkout SDK Generator Repository
         uses: actions/checkout@v4
@@ -39,35 +27,45 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      
+      - name: Show event payload
+        if: ${{ github.event.client_payload.spec_sha }}
+        run: |
+          echo "Spec SHA: ${{ github.event.client_payload.sha }} || "
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Download & Update Local Enriched Spec Copy
+        if: ${{ github.event_name == 'repository_dispatch' || github.event.inputs.spec_url }}
         env:
-          ENRICHED_SPEC_URL: ${{ github.event.inputs.spec_url || 'https://raw.githubusercontent.com/alex-migwi/paystack-spec-enriched/main/dist/paystack-enriched.yaml' }}
+          SPEC_SHA: "${{ github.event.client_payload.sha }}"
+          ENRICHED_SPEC_URL: "${{ github.event.client_payload.sha && 'https://raw.githubusercontent.com/alex-migwi/paystack-spec-enriched/${SPEC_SHA}/dist/paystack-enriched.yaml' || github.event.inputs.spec_url }}"
         run: |
           mkdir -p spec
           echo "🌐 GitHub Action fetching spec from remote release: $ENRICHED_SPEC_URL"
           curl -sSL "$ENRICHED_SPEC_URL" -o spec/paystack-enriched.yaml
           echo "✅ Local spec copy updated: spec/paystack-enriched.yaml"
+          echo "======================================================================================="
+          echo "Validate Spec"
+          head -1 spec/paystack-enriched.yaml | grep -qE '^(openapi|swagger):' \
+            || { echo "❌ Not a valid OpenAPI spec"; exit 1; }
+          grep -q '^paths:' spec/paystack-enriched.yaml \
+            || { echo "❌ Missing 'paths'"; exit 1; }
 
       - name: Generate & Compile Target SDKs from Local Spec Copy
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.auto_generate == 'true' }}
         env:
-          TARGET_LANGS: ${{ github.event.inputs.target_languages || 'typescript' }}
+          TARGET_LANGS: ${{ github.event.inputs.target_languages || 'all' }}
         run: |
           echo "🚀 Generating SDKs from local spec copy for languages: $TARGET_LANGS..."
           npx paystack-sdk-gen generate --lang "$TARGET_LANGS"
 
       - name: Run Prism Contract Test Validation Suite
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.auto_generate == 'true' }}
         run: |
           echo "🧪 Running Prism Mock Validation against local spec copy..."
           npx paystack-sdk-gen test
 
       - name: Commit & Push Updated Local Spec & Generated SDKs
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.auto_generate == 'true' }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(sdk): auto-sync enriched spec copy & rebuild SDKs [skip ci]"
