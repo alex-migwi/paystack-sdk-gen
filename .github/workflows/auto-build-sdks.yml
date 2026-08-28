@@ -19,9 +19,16 @@ jobs:
   sync-and-build:
     runs-on: ubuntu-latest
 
+    # grant only the minimum permissions needed to open a PR
+    permissions:
+      contents: write
+      pull-requests: write  
+
     steps:
       - name: Checkout SDK Generator Repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -65,8 +72,18 @@ jobs:
           echo "🧪 Running Prism Mock Validation against local spec copy..."
           npx paystack-sdk-gen test
 
-      - name: Commit & Push Updated Local Spec & Generated SDKs
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Create Isolated Spec Update PR via GitHub Bot
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: "chore(sdk): auto-sync enriched spec copy & rebuild SDKs [skip ci]"
-          file_pattern: "spec/* packages/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: automated update to enriched spec file"
+          title: "Automated Spec Update"
+          body: "This PR was securely opened by the GitHub Action Bot. It strictly contains updates to enriched sec file."
+          branch: "automation/enriched-spec-update"
+          base: main
+          reviewers: "alex-migwi"
+          
+          # This discard ANY changes made outside of this explicit path.
+          add-paths: |
+            spec/paystack-enriched.yaml
+            packages/*
