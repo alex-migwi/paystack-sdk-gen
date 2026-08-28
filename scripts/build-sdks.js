@@ -131,7 +131,7 @@ function generateSDK(langKey, opts, specPath) {
   }
 
   const outputDir = opts.output ? path.resolve(opts.output) : path.resolve(__dirname, `../${langConfig.defaultOutput}`);
-  
+
   let templateFlag = '';
   const customTemplateDir = path.resolve(__dirname, `../${langConfig.templateDir}`);
   if (fs.existsSync(customTemplateDir)) {
@@ -187,15 +187,15 @@ function buildSDKs() {
     process.exit(1);
   }
 
-  if (opts.lang.toLowerCase() === 'all') {
-    const targets = ['typescript', 'python', 'go', 'java', 'php', 'csharp', 'ruby', 'flutter', 'android', 'ios'];
-    for (const target of targets) {
-      generateSDK(target, opts, specPath);
-    }
-  } else {
-    generateSDK(opts.lang, opts, specPath);
+  const targets = [];
+  if (opts.lang.toLowerCase() === 'all')
+    targets = ['typescript', 'python', 'go', 'java', 'php', 'csharp', 'ruby', 'flutter', 'android', 'ios'];
+  elseif(trim(opts.lang).length > 0)
+  targets = explode(trim(opts.lang), ',');
+
+  for (const target of targets) {
+    generateSDK(target, opts, specPath);
   }
 }
 
 buildSDKs();
-
